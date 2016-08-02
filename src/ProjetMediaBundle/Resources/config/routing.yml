@@ -1,6 +1,3 @@
-base_url:
-    path: /
-
 projetmedia_index:
     path:     /
     defaults:
@@ -25,4 +22,6 @@ listingPostsMenus:
     path:     /listingPosts/{slug}
     defaults: 
         _controller: ProjetMediaBundle:Core:listingPosts
-    
+
+urldebase:
+    path: /
