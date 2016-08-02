@@ -1,0 +1,39 @@
+{{ dump(_context) }}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Page de lancement</title>
+    </head>
+    <body>
+		<h1>Hello {{ utilisateur.name }} !</h1>
+        <p>
+            Le Hello World est un grand classique en programmation.
+            Il signifie énormément, car cela veut dire que vous avez
+            réussi à exécuter le programme pour accomplir une tâche simple :
+            afficher ce hello world !
+		<br />
+        </p>
+		
+
+		Voici la liste des 10 derniers posts pour la page IlotRegal et pour la page :
+		<ul>
+		{% if listeMessages is defined %}
+			{% for message in listeMessages %}
+				<li>{{ message|e }}</li>
+			{% endfor %}
+		{% endif%}
+		</ul>
+		et les derniers posts pour la page Régal du circuit :
+		<ul>
+		{% if listeMessages2 is defined %}
+			{% for message in listeMessages2 %}
+				<li>{{ message|e }}</li>
+			{% endfor %}
+		{% endif%}
+		</ul>
+		
+		<br />
+			<a href="{{  url('base_url') }}listingPosts?affichermenus=true" >Afficher uniquement les news avec menu</a>
+		</p>
+    </body>
+</html>

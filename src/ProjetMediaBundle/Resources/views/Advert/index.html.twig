@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Page de lancement</title>
+    </head>
+    <body>
+        <h1>Hello World !</h1>
+        <h1>Hello {{ nom }} !</h1>
+        <p>
+            Le Hello World est un grand classique en programmation.
+            Il signifie énormément, car cela veut dire que vous avez
+            réussi à exécuter le programme pour accomplir une tâche simple :
+            afficher ce hello world !
+		<br />
+			<a href="{{ loginUrl }}" target="_blank">Connectez-vous avec Facebook!</a>
+        </p>
+		{% if logoutUrl is defined %}
+			<br />
+				<a href="{{ logoutUrl }}" target="_blank">Se déconnecter !</a>
+			</p>
+		{% endif %}
+		
+		
+		<div class="fb-like" data-share="true" data-width="450" data-show-faces="true"></div>
+    </body>
+</html>

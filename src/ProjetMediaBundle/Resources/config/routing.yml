@@ -1,0 +1,28 @@
+base_url:
+    path: /
+
+projetmedia_index:
+    path:     /
+    defaults:
+        _controller: ProjetMediaBundle:Core:index 
+
+projetmedia_page2:
+    path:     /page2
+    defaults: 
+        _controller: ProjetMediaBundle:Core:fonctionTest
+
+callbackFacebook:
+    path:     /callbackFacebook
+    defaults: 
+        _controller: ProjetMediaBundle:Core:callbackFB
+
+listingPosts:
+    path:     /listingPosts
+    defaults: 
+        _controller: ProjetMediaBundle:Core:listingPosts
+
+listingPostsMenus:
+    path:     /listingPosts/{slug}
+    defaults: 
+        _controller: ProjetMediaBundle:Core:listingPosts
+    
