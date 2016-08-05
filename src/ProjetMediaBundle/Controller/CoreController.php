@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Facebook\Facebook;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use \Pusher;
+//use \Pusher;
 
 class CoreController extends Controller
 {
@@ -59,7 +59,6 @@ class CoreController extends Controller
 		{
 			return $this->redirectToRoute('projetmedia_index');
 		}
-		// print_r( $_SESSION['facebook_access_token']);
 		
 		$postsARecuperer  = 15;
 		
@@ -89,32 +88,24 @@ class CoreController extends Controller
 		$donneesUtilisateur= $donneesUtilisateur->getGraphObject();
 		if(!isset($afficherMenus))
 		{
-			
 			$listeMessages = $this->transformResponseFB($response,false);
 			$listeMessages2 = $this->transformResponseFB($response2,false);
 		}
 		else
 		{
 			$postsARecuperer =3;
-			$listeMessages = $this->transformResponseFB($response,true);
-			$listeMessages2 = $this->transformResponseFB($response2,true);
+			$listeMessages = $this->transformResponseFB($response,true,$postsARecuperer);
+			$listeMessages2 = $this->transformResponseFB($response2,true,$postsARecuperer);
 		}
 		
-		// echo '<pre>';
-		// print_r($response);
-		// echo '</pre>';
-		// echo '<hr />';
-			
-			
 		//DATAS pour template
 		if (isset($listeMessages) ||isset($listeMessages2))
 		{
-			// echo " <br /> on charge Liste message";
-			$donneesACharger = array('nom' => 'Nikos','utilisateur'=>$donneesUtilisateur,'listeMessages'=>$listeMessages,'listeMessages2'=>$listeMessages2,'logoutUrl'=>$logoutUrl,'postsARecuperer' => $postsARecuperer,);
+			$donneesACharger = array('utilisateur'=>$donneesUtilisateur,'listeMessages'=>$listeMessages,'listeMessages2'=>$listeMessages2,'logoutUrl'=>$logoutUrl,'postsARecuperer' => $postsARecuperer,);
 		}
 		else
 		{
-			$donneesACharger = array('nom' => 'Nikos','utilisateur'=>$donneesUtilisateur,'logoutUrl'=>$logoutUrl);
+			$donneesACharger = array('utilisateur'=>$donneesUtilisateur,'logoutUrl'=>$logoutUrl);
 		}
 		
 		$content = $this
@@ -158,7 +149,7 @@ class CoreController extends Controller
 	}
 	
 	///fonction de transformation reponse FB en array utilisable
-	function transformResponseFB($response, $tri)
+	function transformResponseFB($response, $tri,$postsARecuperer=15)
 	{
 		$arrayResult = json_decode($response->getBody(), true);
 		$listeMessages= array();
@@ -187,40 +178,33 @@ class CoreController extends Controller
 						}
 						else
 						{
-							//verification de la date pour menu du jour
-							$dateConvertie =  $this->conversionDateFacebook($messageInfos['created_time']);
-							if(!($verifMenuDuJour))
-							{
-								$verifMenuDuJour = $this->checkMenuduJour($dateConvertie);
-								if ($verifMenuDuJour)
+								//verification que la news contienne les bons strings et soit donc bien un menu, pas une news diverse
+								$menu = $this->checkMenu($messageInfos);
+								//Si c'est le cas,  on vérifie la date pour menu du jour , si c'est le menu du jour, on vérifie quel repas est présent dedans
+								if ($menu)
 								{
-									$messageInfos['menuduJour'] = true; 
-									$verifRepas = $this->checkRepas($messageInfos,$listeRepas);
-									if($verifRepas)
+									//VERIFIE la date de la news
+									$dateConvertie =  $this->conversionDateFacebook($messageInfos['created_time']);
+									if(!($verifMenuDuJour))
 									{
-										$messageInfos['platSpecifique'] = $verifRepas; 
+										$verifMenuDuJour = $this->checkMenuduJour($dateConvertie);
+										if ($verifMenuDuJour)
+										{
+											$messageInfos['menuduJour'] = true; 
+											////VERIFIE LE TYPE DE REPAS à chercher
+											$verifRepas = $this->checkRepas($messageInfos,$listeRepas);
+											if($verifRepas)
+											{
+												$messageInfos['platSpecifique'] = $verifRepas; 
+											}
+										}
 									}
-									
+								$listeMessages[] = $messageInfos;
 								}
-							}
-							
-							
-							////VERIFIE LE TYPE DE REPAS à chercher
-							
-							
-							
-							//verification que la news contienne les bons strings
-							$listeMessages = $this->checkMenu($messageInfos,$listeMessages);
+							//si on atteint la limite de posts, on break
 							$nbMessages = count($listeMessages);
-							
-							
-							////
 							if($nbMessages == $limiteDePosts){break;}
 						}
-						// echo '<pre>';
-						// print_r($listeMessages);
-						// echo '</pre>';
-						// echo '<hr />';
 					}
 				  }	
 				}
@@ -231,55 +215,53 @@ class CoreController extends Controller
 	}
 	
 	//Vérifie la date du menu
-	// function checkMenuduJour($messageInfos)
 	function checkMenuduJour($dateMenu)
 	{
 		$dateJourPrecedent = date('Y-m-d', strtotime("-1 day", strtotime(date("Y-m-d"))));
 		if ($dateMenu == $dateJourPrecedent || $dateMenu == date('Y-m-d') )
 		{
-			// echo "<br /> ce menu est à la date du jour " . $dateMenu;
 			return true;
 		}
 	}
 	
 	/// Fonction de vérification du contenu d'un message
-	function checkMenu($post,$listeMessages)
+	function checkMenu($post)
 	{
+		$menu = false;
 		//A remplacer par un regex
-		if (strpos(strtolower($post['message']),'menu ') !== false || strpos(strtolower($post['message']),'jour ') ) {
-			$listeMessages[] = $post;
+		if (
+		strpos(strtolower($post['message']),'menu') !== false || strpos(strtolower($post['message']),'jour') 
+		&&
+			(
+				   strpos(strtolower($post['message']),'lundi') !== false 
+				|| strpos(strtolower($post['message']),'mardi') !== false 
+				|| strpos(strtolower($post['message']),'mercredi') !== false 
+				|| strpos(strtolower($post['message']),'jeudi') !== false 
+				|| strpos(strtolower($post['message']),'vendredi') !== false 
+				|| strpos(strtolower($post['message']),'samedi') !== false 
+				|| strpos(strtolower($post['message']),'dimanche') !== false 
+			)
+		) 
+		{
+			$menu = true;
 		}
-		
-		return $listeMessages;
+		return $menu;
 	}
 	
+	
+	/// Fonction qui vérifie quel repas se trouve dans le menu // REGEX a améliorer
 	function checkRepas($post,$listeRepas)
 	{
 		$carriTrouve = "";
-		//A remplacer par un regex
-		// foreach($listeRepas as $repas)
-		// {
-		
-			// if (stripos(strtolower($post['message']),$repas) !== false)  
-			// {	
-				// echo "<br /> Ce Menu " . $post['id'] . "   contient ce plat : \"".$repas."\" ";	
-				// $carriTrouve = $repas;
-			// }
-		// }
-		// 'rougaille saucisse','rougail saucisse','poulet à la crème','poulet a la crème');
-		
-		preg_match_all('/\b(rougaille saucisse|rougail saucisse|poulet à la crème|poulet  la crème|Rougail morue)\b/i', $post['message'], $matches);
+		preg_match_all('/\b(rougaille saucisse|rougail saucisse|poulet à la crème|poulet a la crème|Rougail morue)\b/i', $post['message'], $matches);
 		foreach ($matches as $val) {
 			if(!empty($val))
 			{
 				$carriTrouve = $val;
 			}
 		}
-		// echo "<pre>";
-		// print_r($matches);
-		// echo "</pre>";
-		return $carriTrouve ;
 		// $this->triggerPusherAction("Carri trouvé","Bonjour, le carri ".$carriTrouve." est présent dans le menu du jour, réservez-vite." );
+		return $carriTrouve ;
 	}
 	
 	
@@ -290,11 +272,11 @@ class CoreController extends Controller
 		return date('Y-m-d', $retourDate);
 	}
 	
-	
+	////// Fonction pusher pour notification
+	/// Non utilisée au final
 	public function triggerPusherAction($event,$message)
 	{
 		  $pusher = $this->container->get('lopi_pusher.pusher');
-		  var_dump($pusher);
 			$pusher->trigger('canalProjetMedia', $event, $message);
 	}
 }
