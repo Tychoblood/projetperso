@@ -1,44 +1,75 @@
-{{ dump(_context) }}
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Page de listings des posts</title>
-		<style>
-				.menuDuJour {background-color: powderblue;}
-				h1   {color: blue;}
-				p    {color: red;}
-		</style>
-    </head>
-    <body>
-		<h1>Hello {{ utilisateur.name }} !</h1>	
-		<br />
-			<a href="{{  url('urldebase') }}listingPosts?affichermenus=true" >Afficher uniquement les news avec menu</a>
-		<br/>
-			<a href="{{  url('urldebase') }}listingPosts" >Afficher toutes les news </a>
+{# src/ProjetMediaBundle/Resources/views/Advert/listeposts.html.twig #}
+
+{% extends 'ProjetMediaBundle::base.html.twig' %}
+
+		{% block title %}Page de listings des posts{% endblock %}
+		  {% block greetings %}
+			<h1>Bonjour <strong>{{ utilisateur.name }} </strong> </h1>	
+		  {% endblock %}
+{% block body %}
+		<div class="btn-group" role="group" aria-label="...">
+		  <a href="{{  url('urldebase') }}listingPosts?affichermenus=true" class="btn btn-default">Afficher uniquement les news avec menu</a>
+		  <a href="{{  url('urldebase') }}listingPosts" class="btn btn-default">Afficher toutes les news</a>
+
+		</div>
+		
 		</p>
-		Voici la liste des 15 derniers posts pour la page IlotRegal et pour la page :
-		<ul>
+		<h2>Page IlotRegal</h2>({{ postsARecuperer }} derniers posts) 
+		
+		<ul class="list-group">
 		{% if listeMessages is defined %}
 			{% for messages in listeMessages %}
-				<li {% if messages.menuduJour is defined %} class="menuDuJour"  {% endif %}>{{ messages.message|e }}</li>
+				<li class="wrapper list-group-item ">
+					<em>{{ messages.message|e }}</em>
+					{% if messages.menuduJour is defined %} 
+						<div class="ribbon-wrapper-green"><div class="ribbon-green">Menu du jour	</div>
+					{% endif %}
+				</li>
+				{% if messages.platSpecifique is defined %}
+					<div class="alert alert-info cache up-arrow" role="alert">
+					Ce menu contient le plat <strong>{{ messages.platSpecifique.0 }}	</strong>
+					</div>
+				{% endif %}
 			{% endfor %}
 		{% endif%}
 		</ul>
-		et les derniers posts pour la page Régal du circuit :
-		<ul>
+		<h2>Page Régal du circuit </h2>({{ postsARecuperer }} derniers posts : )
+		
+		<ul class="list-group">
 		{% if listeMessages2 is defined %}
 			{% for messages in listeMessages2 %}
-				<li{% if messages.menuduJour is defined %} class="menuDuJour"  {% endif %}>{{ messages.message|e }}</li>
+				<li class="list-group-item">
+					<em>{{ messages.message|e }}</em>
+					{% if messages.menuduJour is defined %} 
+						<div class="ribbon-wrapper-green"><div class="ribbon-green">Menu du jour	</div>
+					{% endif %}
+				</li>
 			{% endfor %}
+			{% if messages.platSpecifique is defined %}
+					<div class="alert alert-info cache" role="alert">
+					<div class="apex-dn"></div>
+
+					Ce menu contient le plat <strong>{{ messages.platSpecifique.0 }}	</strong>
+					</div>
+				{% endif %}
 		{% endif%}
 		</ul>
 		
 		{% if logoutUrl is defined %}
 			<br />
-				<a href="{{ logoutUrl }}" target="_blank">Se déconnecter</a>
+				 <a href="{{ logoutUrl }}" target="_blank" class="btn btn-block btn-social btn-facebook">
+			  <span class="fa fa-facebook"></span>
+			  Se déconnecter
+			</a>
 			</p>
 		{% endif %}
-		
-	
-    </body>
-</html>
+{% endblock %}
+{% block scriptFadeIn %}
+	<script>
+		$(document).ready(function() {
+			$(".alert").fadeIn();
+		});
+	</script>
+{% endblock%}
+
+

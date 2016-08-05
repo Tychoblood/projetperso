@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "093083429f3c3b3645a85713a5598daa",
-    "content-hash": "6f6c1a894d33eadc04acf2f8892aed72",
+    "hash": "21f8e8a7c98a789ee9c879da648ecebb",
+    "content-hash": "59d197f4495bee45a72a4232e5c00cf3",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1010,17 +1010,71 @@
             "time": "2015-11-12 13:51:40"
         },
         {
-            "name": "monolog/monolog",
-            "version": "1.20.0",
+            "name": "laupifrpar/pusher-bundle",
+            "version": "1.2.9",
             "source": {
                 "type": "git",
-                "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "55841909e2bcde01b5318c35f2b74f8ecc86e037"
+                "url": "https://github.com/laupiFrpar/LopiPusherBundle.git",
+                "reference": "eb92f6ed805f33a74aa52facf36051963e0ae0a5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/55841909e2bcde01b5318c35f2b74f8ecc86e037",
-                "reference": "55841909e2bcde01b5318c35f2b74f8ecc86e037",
+                "url": "https://api.github.com/repos/laupiFrpar/LopiPusherBundle/zipball/eb92f6ed805f33a74aa52facf36051963e0ae0a5",
+                "reference": "eb92f6ed805f33a74aa52facf36051963e0ae0a5",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3",
+                "pusher/pusher-php-server": ">=2.2.1"
+            },
+            "require-dev": {
+                "symfony/config": "~2.3",
+                "symfony/dependency-injection": "~2.3",
+                "symfony/http-kernel": "~2.3"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Lopi\\Bundle\\PusherBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Pierre-Louis Launay",
+                    "email": "laupi.frpar@gmail.com",
+                    "homepage": "https://github.com/laupiFrpar",
+                    "role": "developer"
+                },
+                {
+                    "name": "Community contributors",
+                    "homepage": "https://github.com/laupifrpar/lopipusherbundle/contributors"
+                }
+            ],
+            "description": "A Pusher bundle for Symfony2",
+            "homepage": "https://github.com/laupifrpar/lopipusherbundle",
+            "keywords": [
+                "nosql",
+                "pusher",
+                "symfony"
+            ],
+            "time": "2016-06-15 13:27:17"
+        },
+        {
+            "name": "monolog/monolog",
+            "version": "1.21.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Seldaek/monolog.git",
+                "reference": "f42fbdfd53e306bda545845e4dbfd3e72edb4952"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/f42fbdfd53e306bda545845e4dbfd3e72edb4952",
+                "reference": "f42fbdfd53e306bda545845e4dbfd3e72edb4952",
                 "shasum": ""
             },
             "require": {
@@ -1085,7 +1139,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2016-07-02 14:02:10"
+            "time": "2016-07-29 03:23:52"
         },
         {
             "name": "paragonie/random_compat",
@@ -1218,6 +1272,50 @@
                 "psr-3"
             ],
             "time": "2012-12-21 11:40:51"
+        },
+        {
+            "name": "pusher/pusher-php-server",
+            "version": "v2.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pusher/pusher-http-php.git",
+                "reference": "1120029fa16bfc92da06971df4a370a1b69c74c1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pusher/pusher-http-php/zipball/1120029fa16bfc92da06971df4a370a1b69c74c1",
+                "reference": "1120029fa16bfc92da06971df4a370a1b69c74c1",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "lib/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Library for interacting with the Pusher REST API",
+            "homepage": "https://github.com/pusher/pusher-php-server",
+            "keywords": [
+                "events",
+                "php-pusher-server",
+                "publish",
+                "pusher",
+                "realtime",
+                "rest",
+                "trigger"
+            ],
+            "time": "2016-07-04 13:08:05"
         },
         {
             "name": "sensio/distribution-bundle",

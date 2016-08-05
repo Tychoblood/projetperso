@@ -18,10 +18,9 @@ class AppKernel extends Kernel
             new Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
-            // new AppBundle\AppBundle(),
             new ProjetMediaBundle\ProjetMediaBundle(),
 			new Symfony\Bundle\AsseticBundle\AsseticBundle(),
-        	// new Facebook(),
+			new Lopi\Bundle\PusherBundle\LopiPusherBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

@@ -1,0 +1,17 @@
+{# src/ProjetMediaBundle/Resources/views/Advert/homepage.html.twig #}
+
+{% extends 'ProjetMediaBundle::base.html.twig' %}
+	  {% block body %}
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+		 {% if loginUrl is defined %}
+		  <br />
+		  <a href="{{ loginUrl }}" target="_blank" class="btn btn-block btn-social btn-facebook">
+			  <span class="fa fa-facebook"></span>
+			  Se connecter avec Facebook
+			</a>
+		{% endif %}
+		</div>
+        <div class="col-md-4"></div>
+		{% endblock %}
+

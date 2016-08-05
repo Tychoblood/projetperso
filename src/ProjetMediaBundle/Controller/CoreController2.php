@@ -12,13 +12,13 @@ use \Pusher;
 
 class CoreController extends Controller
 {
-    public function indexAction(Request $request)
+    public function indexAction()
     {	
-		$session = $request->getSession();
+	
+		$session = new Session();
 		$session->start();
 		//CONNEXION FB
-		$fb = new Facebook(['app_id' => '1660769554242824','app_secret' => '053d0abfb6b64ed473b695bc091c5ec1','default_graph_version' => 'v2.7','persistent_data_handler' => 'session']);
-
+		$fb = new Facebook(['app_id' => '1660769554242824','app_secret' => '053d0abfb6b64ed473b695bc091c5ec1','default_graph_version' => 'v2.7','persistent_data_handler' => 'session',]);
 
 		$helper = $fb->getRedirectLoginHelper();
 		$urlLogin ='https://www.run4web.re/projetMedia/Symfony/web/app_dev.php/callbackFacebook';
@@ -60,6 +60,9 @@ class CoreController extends Controller
 			return $this->redirectToRoute('projetmedia_index');
 		}
 		// print_r( $_SESSION['facebook_access_token']);
+		
+		
+		// $this->triggerPusherAction("Carri voulu du jour ! ","Bonjour, le carri xxx est présent dans le menu du jour, réservez-vite !" );
 		
 		$postsARecuperer  = 15;
 		
@@ -134,13 +137,16 @@ class CoreController extends Controller
 	}
 	
 	public function callbackFBAction()
-	{		
+	{
+	//	$session = new Session();
+	//	$session->start();
+			
 		$fb = new Facebook(['app_id' => '1660769554242824','app_secret' => '053d0abfb6b64ed473b695bc091c5ec1','default_graph_version' => 'v2.7','persistent_data_handler' => 'session']);
 		$helper = $fb->getRedirectLoginHelper();
 		try {
 		  $accessToken = $helper->getAccessToken();
 		} catch(Facebook\Exceptions\FacebookResponseException $e) {
-		  // Si erreur depuis le Graph
+		  // SI erreur depuis le Graph
 		  echo 'Graph a balancé une erreur : ' . $e->getMessage();
 		  exit;
 		} catch(Facebook\Exceptions\FacebookSDKException $e) {
@@ -163,9 +169,6 @@ class CoreController extends Controller
 		$arrayResult = json_decode($response->getBody(), true);
 		$listeMessages= array();
 		$limiteDePosts = 3;
-		$verifMenuDuJour = false;
-		$listeRepas = array('rougaille saucisse','rougail saucisse','poulet à la crème','poulet a la crème');
-		
 		foreach ($arrayResult as $result) 
 		{		
 			if(is_array($result))
@@ -189,32 +192,17 @@ class CoreController extends Controller
 						{
 							//verification de la date pour menu du jour
 							$dateConvertie =  $this->conversionDateFacebook($messageInfos['created_time']);
-							if(!($verifMenuDuJour))
-							{
-								$verifMenuDuJour = $this->checkMenuduJour($dateConvertie);
-								if ($verifMenuDuJour)
-								{
-									$messageInfos['menuduJour'] = true; 
-									$verifRepas = $this->checkRepas($messageInfos,$listeRepas);
-									if($verifRepas)
-									{
-										$messageInfos['platSpecifique'] = $verifRepas; 
-									}
-									
-								}
+							$verifMenuDuJour = $this->checkMenuduJour($dateConvertie);
+							if ($verifMenuDuJour){
+								$messageInfos['menuduJour'] = true; 
 							}
-							
-							
-							////VERIFIE LE TYPE DE REPAS à chercher
-							
-							
 							
 							//verification que la news contienne les bons strings
 							$listeMessages = $this->checkMenu($messageInfos,$listeMessages);
 							$nbMessages = count($listeMessages);
 							
-							
-							////
+							//VERIFIE LE TYPE DE REPAS à chercher
+							$this->checkRepas($messageInfos,$listeMessages);
 							if($nbMessages == $limiteDePosts){break;}
 						}
 						// echo '<pre>';
@@ -227,6 +215,10 @@ class CoreController extends Controller
 			}	
 		}
 		
+// echo '<pre>';
+						// print_r($listeMessages);
+						// echo '</pre>';
+						// echo '<hr />';
 		return $listeMessages;
 	}
 	
@@ -253,32 +245,14 @@ class CoreController extends Controller
 		return $listeMessages;
 	}
 	
-	function checkRepas($post,$listeRepas)
+	function checkRepas($post,$listeMessages)
 	{
 		$carriTrouve = "";
 		//A remplacer par un regex
-		// foreach($listeRepas as $repas)
-		// {
-		
-			// if (stripos(strtolower($post['message']),$repas) !== false)  
-			// {	
-				// echo "<br /> Ce Menu " . $post['id'] . "   contient ce plat : \"".$repas."\" ";	
-				// $carriTrouve = $repas;
-			// }
-		// }
-		// 'rougaille saucisse','rougail saucisse','poulet à la crème','poulet a la crème');
-		
-		preg_match_all('/\b(rougaille saucisse|rougail saucisse|poulet à la crème|poulet  la crème|Rougail morue)\b/i', $post['message'], $matches);
-		foreach ($matches as $val) {
-			if(!empty($val))
-			{
-				$carriTrouve = $val;
-			}
+		if (stripos(strtolower($post['message']),'rougaille saucisse') !== false || stripos(strtolower($post['message']),'rougail saucisse') !== false || stripos(strtolower($post['message']),'poulet à la crème') ) {
+
+			
 		}
-		// echo "<pre>";
-		// print_r($matches);
-		// echo "</pre>";
-		return $carriTrouve ;
 		// $this->triggerPusherAction("Carri trouvé","Bonjour, le carri ".$carriTrouve." est présent dans le menu du jour, réservez-vite." );
 	}
 	
@@ -297,4 +271,3 @@ class CoreController extends Controller
 		  var_dump($pusher);
 			$pusher->trigger('canalProjetMedia', $event, $message);
 	}
-}

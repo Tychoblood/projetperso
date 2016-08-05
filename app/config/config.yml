@@ -74,6 +74,16 @@ assetic:
     filters:
         cssrewrite: ~
 
+lopi_pusher:
+    app_id: 232147
+    key: "976dea949ddaf7ba0803"
+    secret: "0049985cbb6152b0b5f1"
+
+    # Default configuration
+    debug: true 
+    host: https://api-ap1.pusher.com
+    port: 443
+    timeout: 30
 # facebook:
     # app_id: '%1660769554242824%'
     # app_secret: '%053d0abfb6b64ed473b695bc091c5ec1%'
